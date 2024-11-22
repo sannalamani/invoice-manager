@@ -1,0 +1,28 @@
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model Invoice {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendorName  String?   
+  invoiceNumber String? @unique
+  status      String?
+  netAmount   Float?
+  invoiceDate String?
+  dueDate     String?
+  department  String?
+  costCenter  String?
+  poNumber    String?
+  createdTime String? 
+  createdDate String?
+
+  @@map("invoices")
+}
+
