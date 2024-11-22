@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from "react";
-import createInvoice from "@/app/server/invoices/createInvoice";
+import  createInvoice from "@/app/server/invoices/createInvoice";
+import updateInvoice from "@/app/server/invoices/updateInvoice";
 import { toast } from "react-toastify";
 
-export default function InvoiceModal({ onClose }) {
+export default function InvoiceModal({ onClose, invoice }) {
+
   const [formData, setFormData] = useState({
+    id: "",
     vendorName: "",
     invoiceNumber: "",
     status: "Open",
@@ -15,6 +18,7 @@ export default function InvoiceModal({ onClose }) {
     department: "",
     costCenter: "",
     poNumber: "",
+    ...invoice,
   });
 
   const statuses = [
@@ -36,10 +40,15 @@ export default function InvoiceModal({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("Form Data:", formData);
     try {
-      const response = await createInvoice(formData);
-      console.log(response.body);
+      let response = {};
+      if (formData.id) {
+        response = await updateInvoice(formData);
+      } else {
+        response = await createInvoice(formData);
+      }
+      
       if (response.status === 201) {
         onClose();
         toast.success(response.body?.message);
@@ -63,7 +72,7 @@ export default function InvoiceModal({ onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Create Invoice</h2>
+          <h2 className="text-xl font-bold">{ formData.id ? "Edit":"Create" }  Invoice</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -197,9 +206,9 @@ export default function InvoiceModal({ onClose }) {
           <div className="text-right">
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              className="bg-cyan-800 text-white px-4 py-2 rounded-md hover:bg-cyan-900"
             >
-              Submit
+              Save
             </button>
           </div>
         </form>
