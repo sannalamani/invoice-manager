@@ -97,7 +97,7 @@ export default function InvoicePage() {
 
   return (
     <div className="min-w-[400px]">
-      <div className="w-full flex mb-4 justify-between gap-4 ">
+      <div className="w-full flex flex-col-reverse md:flex-row mb-4 justify-between gap-4 ">
         <div className="flex items-center">
           <select
             className="px-2 py-1.5 border border-gray-300 rounded-l-md"
@@ -120,7 +120,7 @@ export default function InvoicePage() {
           />
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 justify-end">
           <div>
             <Button
               variant="contained"
