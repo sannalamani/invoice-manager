@@ -11,6 +11,7 @@ import DropdownIcon from '@/public/icons/down.svg';
 import { toast } from "react-toastify";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Navbar from "./Navbar";
 
 
 export default function InvoicePage() {
@@ -22,7 +23,8 @@ export default function InvoicePage() {
   const [selectedInvoice, setSelectedInvoice] = useState();
   const [searchType, setSearchType] = useState("vendor");
   const [searchText, setSearchText] = useState("");
-  const [filteredInvoices, setFilteredInvoices] = useState(invoices);
+  const [ invoiceByStatus, setInvoiceByStatus] = useState([]);
+  const [filteredInvoices, setFilteredInvoices] = useState([]);
 
   const openModal = (state) => {
     setModalOpen(true);
@@ -81,7 +83,7 @@ export default function InvoicePage() {
   };
 
   useEffect(() => {
-    const filtered = invoices.filter((invoice) => {
+    const filtered = invoiceByStatus.filter((invoice) => {
       if (searchType === "vendor") {
         return invoice.vendorName.toLowerCase().includes(searchText.toLowerCase());
       } else {
@@ -89,34 +91,34 @@ export default function InvoicePage() {
       }
     });
     setFilteredInvoices(filtered);
-  }, [searchType, searchText, invoices]);
+  }, [searchType, searchText, invoiceByStatus]);
 
   useEffect(() => {
     getAllInvoices();
-  }, [modalOpen]);
+  }, []);
 
   return (
-    <div className="min-w-[400px]">
-      <div className="w-full flex flex-col-reverse md:flex-row mb-4 justify-between gap-4 ">
+    <div className="min-w-[700px]">
+      <Navbar invoices={invoices} setInvoiceByStatus={setInvoiceByStatus}   />
+      <div className="w-full flex mb-4 justify-between gap-4 ">
         <div className="flex items-center">
           <select
-            className="px-2 py-1.5 border border-gray-300 rounded-l-md"
-            aria-label="Select search type"
+            className="h-8 px-2 py-1.5 border border-gray-300 rounded-l-md"
             value={searchType}
-            disabled={invoices.length === 0}
+            disabled={invoiceByStatus.length === 0}
             onChange={(e) => setSearchType(e.target.value)}
           >
-            <option value="vendor">by vendor</option>
-            <option value="invoice">by invoice</option>
+            <option value="vendor"> vendor</option>
+            <option value="invoice"> invoice</option>
           </select>
 
           <input
             type="text"
-            placeholder="Search..."
-            disabled={invoices.length === 0}
+            placeholder="search..."
+            disabled={invoiceByStatus.length === 0}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="px-2 py-1 border border-gray-300 rounded-r-md w-full"
+            className="h-8 px-2 py-1 border border-gray-300 rounded-r-md "
           />
         </div>
 
@@ -170,7 +172,7 @@ export default function InvoicePage() {
         </Box>
       )}
 
-      {modalOpen && <InvoiceModal onClose={closeModal} invoice={editInvoice} />}
+      {modalOpen && <InvoiceModal onClose={closeModal} invoice={editInvoice} refreshInvoices={getAllInvoices} />}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import  React,  {useState} from "react";
+import  React,  {useEffect, useState} from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -92,10 +92,10 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  useEffect(() => {
+    setSelectedInvoice(null);
+    setSelectedRow(null);
+  }, [rows, setSelectedInvoice]);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>

@@ -5,7 +5,7 @@ import  createInvoice from "@/app/server/invoices/createInvoice";
 import updateInvoice from "@/app/server/invoices/updateInvoice";
 import { toast } from "react-toastify";
 
-export default function InvoiceModal({ onClose, invoice }) {
+export default function InvoiceModal({ onClose, invoice, refreshInvoices }) {
 
   const [formData, setFormData] = useState({
     id: "",
@@ -19,7 +19,7 @@ export default function InvoiceModal({ onClose, invoice }) {
     costCenter: "",
     poNumber: "",
     ...invoice,
-  });
+  }); 
 
   const statuses = [
     "Open",
@@ -52,6 +52,7 @@ export default function InvoiceModal({ onClose, invoice }) {
       
       if (response.status === 201) {
         onClose();
+        refreshInvoices();
         toast.update(statusToast, { render: "Invoice saved successfully", type: "success", isLoading: false, autoClose: 2000 });
       }
       else {
@@ -102,6 +103,7 @@ export default function InvoiceModal({ onClose, invoice }) {
               type="text"
               name="invoiceNumber"
               value={formData.invoiceNumber}
+              placeholder="ex.INV0001"
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-md p-2"
@@ -179,7 +181,7 @@ export default function InvoiceModal({ onClose, invoice }) {
             </div>
 
             <div className="flex-1">
-              <label className="block text-sm font-medium">Cost Center</label>
+              <label className="block text-sm font-medium">Cost Center (optional)</label>
               <input
                 type="text"
                 name="costCenter"
