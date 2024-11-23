@@ -85,7 +85,7 @@ export default function InvoicePage() {
       <div className="w-full flex mb-4 justify-end gap-4 ">
         <Button
           variant="contained"
-          className="bg-cyan-900"
+          style={{ backgroundColor: "#164e63" }}
           onClick={handleClick}
         >
           Actions <DropdownIcon className="w-4 h-4 ml-2" />
@@ -96,10 +96,10 @@ export default function InvoicePage() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleEdit} className="hover:bg-blue-400">
+          <MenuItem onClick={handleEdit}>
             Edit
           </MenuItem>
-          <MenuItem onClick={handleDelete} className="hover:bg-rose-600">
+          <MenuItem onClick={handleDelete} style={{ backgroundColor: "#e3445c" }}>
             Delete
           </MenuItem>
         </Menu>
