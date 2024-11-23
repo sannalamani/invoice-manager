@@ -20,6 +20,9 @@ export default function InvoicePage() {
   const [editInvoice, setEditInvoice] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState();
+  const [searchType, setSearchType] = useState("vendor");
+  const [searchText, setSearchText] = useState("");
+  const [filteredInvoices, setFilteredInvoices] = useState(invoices);
 
   const openModal = (state) => {
     setModalOpen(true);
@@ -50,12 +53,13 @@ export default function InvoicePage() {
 
   const handleDelete = async () => {
     try {
+      const toastStatus = toast.loading("Deleting invoice...");
       const response = await deleteInvoice({ id: selectedInvoice });
       if (response.status === 200) {
-        toast.success(response.body?.message);
+        toast.update(toastStatus, { render: response.body.message, type: "success", isLoading: false  ,autoClose: 2000});
       }
     } catch (error) {
-      toast.error("Error deleting invoice");
+      toast.update(toastStatus, { render: "Error deleting invoice", type: "error", isLoading: false, autoClose: 2000 });
       console.error("Error deleting invoice:", error);
     }
     getAllInvoices();
@@ -77,13 +81,44 @@ export default function InvoicePage() {
   };
 
   useEffect(() => {
+    const filtered = invoices.filter((invoice) => {
+      if (searchType === "vendor") {
+        return invoice.vendorName.toLowerCase().includes(searchText.toLowerCase());
+      } else {
+        return invoice.invoiceNumber.toLowerCase().includes(searchText.toLowerCase());
+      }
+    });
+    setFilteredInvoices(filtered);
+  }, [searchType, searchText, invoices]);
+
+  useEffect(() => {
     getAllInvoices();
   }, [modalOpen]);
 
   return (
     <div className="min-w-[400px]">
       <div className="w-full flex mb-4 justify-between gap-4 ">
-        <div></div>
+        <div className="flex items-center">
+          <select
+            className="px-2 py-1.5 border border-gray-300 rounded-l-md"
+            aria-label="Select search type"
+            value={searchType}
+            disabled={invoices.length === 0}
+            onChange={(e) => setSearchType(e.target.value)}
+          >
+            <option value="vendor">by vendor</option>
+            <option value="invoice">by invoice</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="Search..."
+            disabled={invoices.length === 0}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="px-2 py-1 border border-gray-300 rounded-r-md w-full"
+          />
+        </div>
 
         <div className="flex gap-4">
           <div>
@@ -91,6 +126,7 @@ export default function InvoicePage() {
               variant="contained"
               style={{ backgroundColor: "#164e63" }}
               onClick={handleClick}
+              hidden={filteredInvoices.length === 0}
             >
               Actions <DropdownIcon className="w-4 h-4 ml-2" />
             </Button>
@@ -119,11 +155,11 @@ export default function InvoicePage() {
       </div>
       {!loading ? (
         <div>
-          {invoices.length === 0 ? (
+          {filteredInvoices.length === 0 ? (
             <p className="text-center">No invoices found</p>
           ) : (
             <StickyHeadTable
-              rows={invoices}
+              rows={filteredInvoices}
               setSelectedInvoice={setSelectedInvoice}
             />
           )}
