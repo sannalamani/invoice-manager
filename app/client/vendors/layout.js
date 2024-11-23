@@ -1,4 +1,3 @@
-
 export default function Layout({ children }) {
-  return <section>{children}</section>
-}
+    return <section>{children}</section>
+  }

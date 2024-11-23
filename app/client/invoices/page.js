@@ -9,11 +9,14 @@ import StickyHeadTable from "../components/StickyTable";
 import { Button, Menu, MenuItem } from '@mui/material';
 import DropdownIcon from '@/public/icons/down.svg';
 import { toast } from "react-toastify";
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 export default function InvoicePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editInvoice, setEditInvoice ] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState();
@@ -59,9 +62,17 @@ export default function InvoicePage() {
   };
 
   const getAllInvoices = async () => {
-    const response = await getInvoices();
-    if (response.status === 200) {
-      setInvoices(response.body.invoices);
+
+    try {
+      const response = await getInvoices();
+      if (response.status === 200) {
+        setInvoices(response.body.invoices);
+      }
+    } catch (error) {
+      toast.error("Error fetching invoices");
+      console.error("Error fetching invoices:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,10 +110,22 @@ export default function InvoicePage() {
           Create Invoice
         </button>
       </div>
-
-      <div>
-        <StickyHeadTable rows={invoices} setSelectedInvoice={setSelectedInvoice} />
-      </div>
+      {!loading ? (
+        <div>
+          {invoices.length === 0 ? (
+            <p className="text-center">No invoices found</p>
+          ) : (
+            <StickyHeadTable
+              rows={invoices}
+              setSelectedInvoice={setSelectedInvoice}
+            />
+          )}
+        </div>
+      ) : (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      )}
 
       {modalOpen && <InvoiceModal onClose={closeModal} invoice={editInvoice} />}
     </div>
