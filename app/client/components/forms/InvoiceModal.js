@@ -40,7 +40,7 @@ export default function InvoiceModal({ onClose, invoice }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    const statusToast = toast.loading("Saving Invoice...");
     try {
       let response = {};
       if (formData.id) {
@@ -48,17 +48,18 @@ export default function InvoiceModal({ onClose, invoice }) {
       } else {
         response = await createInvoice(formData);
       }
+
       
       if (response.status === 201) {
         onClose();
-        toast.success(response.body?.message);
+        toast.update(statusToast, { render: "Invoice saved successfully", type: "success", isLoading: false, autoClose: 2000 });
       }
       else {
-        toast.error(response.body?.message);
+        toast.update(statusToast, { render: "Error saving invoice", type: "error",isLoading: false, autoClose: 2000});
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
-      toast.error("Error creating invoice");
+      toast.update(statusToast, { render: "Error saving invoice", type: "error", isLoading: false, autoClose: 2000 });
     }
   };
 

@@ -17,11 +17,14 @@ export default function InvoicePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editInvoice, setEditInvoice ] = useState({});
+  const [editInvoice, setEditInvoice] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState();
 
-  const openModal = (state) => {setModalOpen(true); state === "create" ? setEditInvoice({}) : null;};
+  const openModal = (state) => {
+    setModalOpen(true);
+    state === "create" ? setEditInvoice({}) : null;
+  };
   const closeModal = () => setModalOpen(false);
 
   const handleClick = (event) => {
@@ -36,20 +39,18 @@ export default function InvoicePage() {
     setAnchorEl(null);
   };
 
-
-  const handleEdit = async() => {
-    const response = await getInvoiceById({ id : selectedInvoice });
+  const handleEdit = async () => {
+    const response = await getInvoiceById({ id: selectedInvoice });
     if (response.status === 200) {
       setEditInvoice(response.body.invoice);
       openModal("edit");
     }
-    handleClose(); 
+    handleClose();
   };
 
-
-  const handleDelete = async() => {
+  const handleDelete = async () => {
     try {
-      const response = await deleteInvoice({ id : selectedInvoice });
+      const response = await deleteInvoice({ id: selectedInvoice });
       if (response.status === 200) {
         toast.success(response.body?.message);
       }
@@ -58,11 +59,10 @@ export default function InvoicePage() {
       console.error("Error deleting invoice:", error);
     }
     getAllInvoices();
-    handleClose(); 
+    handleClose();
   };
 
   const getAllInvoices = async () => {
-
     try {
       const response = await getInvoices();
       if (response.status === 200) {
@@ -81,34 +81,41 @@ export default function InvoicePage() {
   }, [modalOpen]);
 
   return (
-    <div>
-      <div className="w-full flex mb-4 justify-end gap-4 ">
-        <Button
-          variant="contained"
-          style={{ backgroundColor: "#164e63" }}
-          onClick={handleClick}
-        >
-          Actions <DropdownIcon className="w-4 h-4 ml-2" />
-        </Button>
+    <div className="min-w-[400px]">
+      <div className="w-full flex mb-4 justify-between gap-4 ">
+        <div></div>
 
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={handleEdit}>
-            Edit
-          </MenuItem>
-          <MenuItem onClick={handleDelete} style={{ backgroundColor: "#e3445c" }}>
-            Delete
-          </MenuItem>
-        </Menu>
-        <button
-          className=" bg-cyan-900 px-3 py-1 text-white"
-          onClick={() => openModal("create")}
-        >
-          Create Invoice
-        </button>
+        <div className="flex gap-4">
+          <div>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: "#164e63" }}
+              onClick={handleClick}
+            >
+              Actions <DropdownIcon className="w-4 h-4 ml-2" />
+            </Button>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleEdit}>Edit</MenuItem>
+              <MenuItem
+                onClick={handleDelete}
+                style={{ backgroundColor: "#e3445c" }}
+              >
+                Delete
+              </MenuItem>
+            </Menu>
+          </div>
+          <button
+            className=" bg-cyan-900 px-3 py-1 text-white"
+            onClick={() => openModal("create")}
+          >
+            Create Invoice
+          </button>
+        </div>
       </div>
       {!loading ? (
         <div>

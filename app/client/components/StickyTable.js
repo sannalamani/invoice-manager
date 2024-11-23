@@ -190,13 +190,12 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 20, 25]}
         component="div"
         count={rows.length}
-        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[]}
+        rowsPerPage={10}
         page={page}
         onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
         labelDisplayedRows={({ page }) => 
           `Page: ${page + 1} of ${Math.ceil(rows.length / rowsPerPage)}`
         }
