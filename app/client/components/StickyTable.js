@@ -107,6 +107,10 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
                 style={{
                   backgroundColor: "#ebf5fb",
                   borderTop: "2px solid #e0e0e0",
+                  position: "sticky",
+                  background: "#ebf5fb",
+                  left: 0,
+                  zIndex: 10,
                 }}
               >
               </TableCell>
@@ -116,10 +120,7 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
                   align={column.align}
                   style={{
                     minWidth: column.minWidth,
-                    position: index === 0 ? "sticky" : "static",
-                    left: index === 0 ? 0 : "unset",
                     background: index === 0 ? "white" : "inherit",
-                    zIndex: index === 0 ? 1 : "auto",
                     borderRight: index === 0 ? "1px solid #e0e0e0" : "none",
                     backgroundColor: "#ebf5fb",
                     borderTop: "2px solid #e0e0e0",
@@ -156,10 +157,7 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
                           key={column.id}
                           align={column.align}
                           style={{
-                            position: index === 0 ? "sticky" : "static",
-                            left: index === 0 ? 0 : "unset",
-                            background: index === 0 ? "white" : "inherit",
-                            zIndex: index === 0 ? 1 : "auto",
+                            position: "static",
                             borderRight:
                               index === 0 ? "1px solid #e0e0e0" : "none",
                           }}

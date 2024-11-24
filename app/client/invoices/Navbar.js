@@ -35,7 +35,7 @@ export default function Navbar({ invoices, setInvoiceByStatus }) {
       }, [setInvoiceByStatus, invoices]);
 
     return (
-      <div className="flex justify-between border-y-2 mb-8">
+      <div className="flex justify-between border-y-2 mb-8 overflow-x-auto scrollbar-hide  mx-auto">
         {statuses.map((status) => (
           <button
             key={status}

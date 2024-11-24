@@ -98,9 +98,9 @@ export default function InvoicePage() {
   }, []);
 
   return (
-    <div className="min-w-[700px]">
+    <div className="mx-auto">
       <Navbar invoices={invoices} setInvoiceByStatus={setInvoiceByStatus}   />
-      <div className="w-full flex mb-4 justify-between gap-4 ">
+      <div className="w-full flex flex-col-reverse mb-4 justify-between gap-4 md:flex-row ">
         <div className="flex items-center">
           <select
             className="h-8 px-2 py-1.5 border border-gray-300 rounded-l-md"
@@ -118,12 +118,12 @@ export default function InvoicePage() {
             disabled={invoiceByStatus.length === 0}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="h-8 px-2 py-1 border border-gray-300 rounded-r-md "
+            className="h-8 px-2 py-1 border border-gray-300 rounded-r-md w-40"
           />
         </div>
 
-        <div className="flex gap-4 justify-end">
-          <div>
+        <div className="flex flex-col gap-4 justify-end items-end sm:flex-row">
+          <div className="">
             <Button
               variant="contained"
               style={{ backgroundColor: "#164e63" }}
@@ -148,7 +148,7 @@ export default function InvoicePage() {
             </Menu>
           </div>
           <button
-            className=" bg-cyan-900 px-3 py-1 text-white"
+            className=" bg-cyan-900 px-3 py-1.5 rounded-sm text-white whitespace-nowrap"
             onClick={() => openModal("create")}
           >
             Create Invoice
@@ -156,7 +156,7 @@ export default function InvoicePage() {
         </div>
       </div>
       {!loading ? (
-        <div>
+        <div className="">
           {filteredInvoices.length === 0 ? (
             <p className="text-center">No invoices found</p>
           ) : (
