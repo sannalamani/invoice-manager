@@ -66,19 +66,9 @@ export default function InvoiceModal({ onClose, invoice, refreshInvoices }) {
       if (response.status === 201) {
         onClose();
         refreshInvoices();
-        toast.update(statusToast, {
-          render: "Invoice saved successfully",
-          type: "success",
-          isLoading: false,
-          autoClose: 2000,
-        });
+        toast.update(statusToast, { render: response.body.message, type: "success",isLoading: false, autoClose: 2000});
       } else {
-        toast.update(statusToast, {
-          render: "Error saving invoice",
-          type: "error",
-          isLoading: false,
-          autoClose: 2000,
-        });
+        toast.update(statusToast, { render: response.body.message, type: "error",isLoading: false, autoClose: 2000});
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
