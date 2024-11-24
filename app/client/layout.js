@@ -3,11 +3,11 @@ import Header from "./components/layouts/Header";
 
 export default function Layout({ children }) {
   return (
-    <div className="flex min-h-screen ">
+    <div className="flex min-h-screen">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex w-full flex-col min-w-[calc(100vw-100px)] sm:min-w-[calc(100vw-200px)] ">
         <Header />
-        <main className="p-6 text-black" style={{ maxWidth: 'calc(100vw - 176px)' }}>{children}</main>
+        <main className="px-6 text-black">{children}</main>
       </div>
     </div>
   );

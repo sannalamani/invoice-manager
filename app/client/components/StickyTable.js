@@ -1,4 +1,4 @@
-import  React,  {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import  { Radio } from "@mui/material";
+import { Radio } from "@mui/material";
 
 const statusColors = {
   Open: "#d6eaf8",
@@ -74,14 +74,14 @@ const columns = [
 export default function StickyHeadTable({ rows, setSelectedInvoice }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedRow, setSelectedRow] = useState(null); 
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const handleSelectRow = (id) => {
     if (selectedRow === id) {
       setSelectedRow(null);
       setSelectedInvoice(null);
       return;
-    }   
+    }
     setSelectedRow(id);
     setSelectedInvoice(id);
   };
@@ -103,25 +103,28 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell 
+              <TableCell
                 style={{
                   backgroundColor: "#ebf5fb",
                   borderTop: "2px solid #e0e0e0",
+                  background: "#ebf5fb",
+                  borderTop: "2px solid #e0e0e0",
+                  
                 }}
-              >
-              </TableCell>
+                className={`${"sm:sticky sm:left-0  sm:z-10 sm:border-r"}`}
+              ></TableCell>
               {columns.map((column, index) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
+                  className={`${
+                    index === 0
+                      ? "sm:sticky sm:left-0 sm:bg-white sm:z-10 sm:border-r"
+                      : "static"
+                  }`}
                   style={{
                     minWidth: column.minWidth,
-                    position: index === 0 ? "sticky" : "static",
-                    left: index === 0 ? 0 : "unset",
-                    background: index === 0 ? "white" : "inherit",
-                    zIndex: index === 0 ? 1 : "auto",
-                    borderRight: index === 0 ? "1px solid #e0e0e0" : "none",
-                    backgroundColor: "#ebf5fb",
+                    background: "#ebf5fb",
                     borderTop: "2px solid #e0e0e0",
                   }}
                 >
@@ -136,16 +139,18 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
               .map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                    <TableCell padding="checkbox"
-                     style={{
-                      position: "sticky",
-                      background: "white",
-                      left: 0,
-                      zIndex: 2,
-                    }}>
+                    <TableCell
+                      padding="checkbox"
+                      style={{
+                        position: "sticky",
+                        background: "white",
+                        left: 0,
+                        zIndex: 2,
+                      }}
+                    >
                       <Radio
                         checked={selectedRow === row.id}
-                        onClick={() =>  handleSelectRow(row.id)}
+                        onClick={() => handleSelectRow(row.id)}
                         value={row.id}
                       />
                     </TableCell>
@@ -155,23 +160,26 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
                         <TableCell
                           key={column.id}
                           align={column.align}
+                          className={`${
+                            index === 0
+                              ? "sm:sticky sm:left-0 sm:bg-white sm:z-10 sm:border-r"
+                              : ""
+                          }`}
                           style={{
-                            position: index === 0 ? "sticky" : "static",
-                            left: index === 0 ? 0 : "unset",
-                            background: index === 0 ? "white" : "inherit",
-                            zIndex: index === 0 ? 1 : "auto",
-                            borderRight:
-                              index === 0 ? "1px solid #e0e0e0" : "none",
+                            background:
+                              index === 0 && column.id !== "status"
+                                ? "white"
+                                : "transparent",
                           }}
                         >
                           <span
                             style={{
-                              padding: "4px 8px",
+                              padding: "4px 20px",
                               borderRadius: "20px",
                               backgroundColor:
                                 column.id === "status"
                                   ? statusColors[value]
-                                  : "transparent",
+                                  : "transpartent",
                             }}
                           >
                             {column.format && typeof value === "number"
@@ -196,7 +204,7 @@ export default function StickyHeadTable({ rows, setSelectedInvoice }) {
         rowsPerPage={10}
         page={page}
         onPageChange={handleChangePage}
-        labelDisplayedRows={({ page }) => 
+        labelDisplayedRows={({ page }) =>
           `Page: ${page + 1} of ${Math.ceil(rows.length / rowsPerPage)}`
         }
       />

@@ -3,10 +3,10 @@ import NotificationIcon from "@/public/icons/notification.svg"
 
 export default function Header() {
     return (
-      <div className="w-full min-w-[700px] flex p-4 text-black ">
-        <h1 className="text-2xl font-extrabold whitespace-nowrap ">Manage Invoices</h1>
+      <div className="w-full flex flex-col-reverse p-4 text-black md:flex-row gap-8">
+        <h1 className="text-xl font-extrabold whitespace-nowrap ">Manage Invoices</h1>
         <div className="w-full flex items-center justify-end gap-4 divide-x-2 divide-gray-400">
-          <NotificationIcon  className="w-10 h-10" /> 
+          <NotificationIcon  className="w-8 h-8" /> 
           <div className="flex gap-2">
               <UserIcon className="w-12 h-12" /> 
               <div>   
