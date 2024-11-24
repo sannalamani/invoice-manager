@@ -1,25 +1,37 @@
-'use client';
+"use client";
 
 import { useState } from "react";
-import  createInvoice from "@/app/server/invoices/createInvoice";
+import { useForm } from "react-hook-form";
+import Input from "../inputs/input";
+import Selector from "../inputs/selector";
+import createInvoice from "@/app/server/invoices/createInvoice";
 import updateInvoice from "@/app/server/invoices/updateInvoice";
 import { toast } from "react-toastify";
 
 export default function InvoiceModal({ onClose, invoice, refreshInvoices }) {
-
   const [formData, setFormData] = useState({
     id: "",
     vendorName: "",
     invoiceNumber: "",
     status: "Open",
     netAmount: 0,
-    invoiceDate:  new Date().toISOString().split("T")[0],
-    dueDate:  new Date().toISOString().split("T")[0],
+    invoiceDate: new Date().toISOString().split("T")[0],
+    dueDate: new Date().toISOString().split("T")[0],
     department: "",
     costCenter: "",
     poNumber: "",
     ...invoice,
-  }); 
+  });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: formData,
+  });
 
   const statuses = [
     "Open",
@@ -33,34 +45,49 @@ export default function InvoiceModal({ onClose, invoice, refreshInvoices }) {
     "Void",
   ];
 
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    setFormData((prevData) => ({ ...prevData,[name]: type === "number" ? parseInt(value) : value }));
+  const handleChange = (name, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    console.log("Form Data:", data);
     const statusToast = toast.loading("Saving Invoice...");
     try {
       let response = {};
-      if (formData.id) {
-        response = await updateInvoice(formData);
+      if (data.id) {
+        response = await updateInvoice(data);
       } else {
-        response = await createInvoice(formData);
+        response = await createInvoice(data);
       }
 
-      
       if (response.status === 201) {
         onClose();
         refreshInvoices();
-        toast.update(statusToast, { render: "Invoice saved successfully", type: "success", isLoading: false, autoClose: 2000 });
-      }
-      else {
-        toast.update(statusToast, { render: "Error saving invoice", type: "error",isLoading: false, autoClose: 2000});
+        toast.update(statusToast, {
+          render: "Invoice saved successfully",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
+      } else {
+        toast.update(statusToast, {
+          render: "Error saving invoice",
+          type: "error",
+          isLoading: false,
+          autoClose: 2000,
+        });
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
-      toast.update(statusToast, { render: "Error saving invoice", type: "error", isLoading: false, autoClose: 2000 });
+      toast.update(statusToast, {
+        render: "Error saving invoice",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
@@ -74,7 +101,9 @@ export default function InvoiceModal({ onClose, invoice, refreshInvoices }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{ formData.id ? "Edit":"Create" }  Invoice</h2>
+          <h2 className="text-xl font-bold">
+            {formData.id ? "Edit" : "Create"} Invoice
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -82,126 +111,162 @@ export default function InvoiceModal({ onClose, invoice, refreshInvoices }) {
             ✕
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Vendor Name */}
           <div>
-            <label className="block text-sm font-medium">Vendor Name</label>
-            <input
+            <Input
+              label="Vendor Name"
               type="text"
               name="vendorName"
-              value={formData.vendorName}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2"
+              register={register}
+              value={formData?.vendorName}
+              control={control}
+              validation={{
+                required: "required",
+              }}
+              onChange={(e) => handleChange("vendorName", e.target.value)}
+              error={errors.vendorName}
             />
           </div>
 
           {/* Invoice Number */}
           <div>
-            <label className="block text-sm font-medium">Invoice Number (starts with INV)</label>
-            <input
+            <Input
+              label="Invoice Number"
               type="text"
               name="invoiceNumber"
-              value={formData.invoiceNumber}
-              placeholder="ex.INV0001"
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2"
+              register={register}
+              value={formData?.invoiceNumber}
+              control={control}
+              validation={{
+                required: "required",
+                pattern: {
+                  value: /^INV[a-zA-Z0-9]*$/,
+                  message: "Must start with 'INV'",
+                },
+              }}
+              onChange={(e) => handleChange("invoiceNumber", e.target.value)}
+              error={errors.invoiceNumber}
             />
           </div>
 
           {/* Status Dropdown */}
           <div>
-            <label className="block text-sm font-medium">Status</label>
-            <select
+            <Selector
+              label="Status"
               name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-            >
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+              register={register}
+              control={control}
+              validation={{}}
+              value={formData?.status}
+              error={errors.status}
+              options={statuses.map((status) => ({
+                value: status,
+                label: status,
+              }))}
+              defaultOption={{ value: "Open", label: "Open" }}
+              onChange={(e) => handleChange("status", e.target.value)}
+            />
           </div>
 
           {/* Net Amount */}
           <div>
-            <label className="block text-sm font-medium">Net Amount</label>
-            <input
+            <Input
+              label="Net Amount"
               type="number"
               name="netAmount"
-              value={formData.netAmount}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2"
+              register={register}
+              value={formData?.netAmount}
+              control={control}
+              validation={{
+                required: "required",
+              }}
+              error={errors.netAmount}
+              onChange={(e) => handleChange("netAmount", e.target.value)}
             />
           </div>
 
           <div className="flex flex-row gap-2">
             <div className="flex-1">
-              <label className="block text-sm font-medium">Invoice Date</label>
-              <input
+              <Input
+                label="Invoice Date"
                 type="date"
                 name="invoiceDate"
-                value={formData.invoiceDate} 
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-md p-2"
+                register={register}
+                value={formData?.invoiceDate}
+                control={control}
+                validation={{
+                  required: "required",
+                }}
+                error={errors.invoiceDate}
+                onChange={(e) => handleChange("invoiceDate", e.target.value)}
               />
             </div>
 
             {/* Due Date */}
             <div className="flex-1">
-              <label className="block text-sm font-medium">Due Date</label>
-              <input
+              <Input
+                label="Due Date"
                 type="date"
                 name="dueDate"
-                value={formData.dueDate} 
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-md p-2"
+                register={register}
+                value={formData?.dueDate}
+                control={control}
+                validation={{
+                  required: "required",
+                }}
+                error={errors.dueDate}
+                onChange={(e) => handleChange("dueDate", e.target.value)}
               />
             </div>
           </div>
 
           <div className="flex flex-row gap-2">
             <div className="flex-1">
-              <label className="block text-sm font-medium">Department</label>
-              <input
+              <Input
+                label="Department"
                 type="text"
                 name="department"
-                value={formData.department}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-md p-2"
+                register={register}
+                value={formData?.department}
+                control={control}
+                validation={{
+                  required: "required",
+                }}
+                error={errors.department}
+                onChange={(e) => handleChange("department", e.target.value)}
               />
             </div>
 
             <div className="flex-1">
-              <label className="block text-sm font-medium">Cost Center (optional)</label>
-              <input
+              <Input
+                label="Cost Center"
                 type="text"
                 name="costCenter"
-                value={formData.costCenter}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2"
+                register={register}
+                value={formData?.costCenter}
+                control={control}
+                validation={{}}
+                error={errors.costCenter}
+                onChange={(e) => handleChange("costCenter", e.target.value)}
               />
             </div>
           </div>
 
           {/* PO Number */}
           <div>
-            <label className="block text-sm font-medium">PO Number</label>
-            <input
+            <Input
+              label="PO Number"
               type="text"
               name="poNumber"
-              value={formData.poNumber}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2"
+              register={register}
+              value={formData?.poNumber}
+              control={control}
+              validation={{
+                required: "required",
+              }}
+              error={errors.poNumber}
+              onChange={(e) => handleChange("poNumber", e.target.value)}
             />
           </div>
 
