@@ -39,8 +39,8 @@ export default async function updateInvoice(req) {
             department: validatedData.data.department,
             costCenter: validatedData.data.costCenter,
             poNumber: validatedData.data.poNumber,
-            createdDate: new Date().toISOString().split("T")[0],
-            createdTime: new Date().toLocaleTimeString(),
+            // createdDate: new Date().toISOString().split("T")[0],
+            // createdTime: new Date().toLocaleTimeString(),
         },
       });
       console.log("Invoice Updated:", invoice);
